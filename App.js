@@ -18,6 +18,12 @@ export default function App() {
     setCurrentGoalText("");
   };
 
+  const handleDeleteGoal = () => {
+    setGoals((prevGoals) => {
+      return prevGoals.filter((goal) => goal !== currentGoalText);
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
@@ -30,9 +36,11 @@ export default function App() {
         />
         <Button onPress={() => handleAddGoal()} title="Create" />
       </View>
-      <View>
+      <View style={styles.goals}>
         {goals.map((goal) => (
-          <Text key={goal}>{goal}</Text>
+          <Text onPress={() => handleDeleteGoal()} key={goal}>
+            {goal}
+          </Text>
         ))}
       </View>
     </SafeAreaView>
