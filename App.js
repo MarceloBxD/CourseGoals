@@ -7,6 +7,7 @@ import {
   Text,
   TextInput,
   View,
+  ScrollView,
 } from "react-native";
 
 export default function App() {
@@ -33,17 +34,19 @@ export default function App() {
         <Button onPress={() => handleAddGoal()} title="Create" />
       </View>
       <View style={styles.goalsContainer}>
-        {goals.map((goal) => (
-          <Text
-            style={styles.goalText}
-            key={goal}
-            onPress={() =>
-              setGoals((prevGoals) => prevGoals.filter((g) => g !== goal))
-            }
-          >
-            {goal}
-          </Text>
-        ))}
+        <ScrollView>
+          {goals.map((goal) => (
+            <Text
+              style={styles.goalText}
+              key={goal}
+              onPress={() =>
+                setGoals((prevGoals) => prevGoals.filter((g) => g !== goal))
+              }
+            >
+              {goal}
+            </Text>
+          ))}
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
@@ -93,5 +96,6 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
     borderRadius: 5,
     marginBottom: 10,
+    minWidth: "100%",
   },
 });
