@@ -1,6 +1,11 @@
 import React, { View, TextInput, StyleSheet, Button } from "react-native";
 
-export default function GoalInput({ currentGoalText, setCurrentGoalText, setGoals }) {
+export default function GoalInput({
+  currentGoalText,
+  setCurrentGoalText,
+  setGoals,
+  setIsModalVisible,
+}) {
   const handleAddGoal = () => {
     setGoals((prevGoals) => [
       ...prevGoals,
@@ -10,6 +15,7 @@ export default function GoalInput({ currentGoalText, setCurrentGoalText, setGoal
       },
     ]);
     setCurrentGoalText("");
+    setIsModalVisible(false);
   };
 
   return (
@@ -21,7 +27,11 @@ export default function GoalInput({ currentGoalText, setCurrentGoalText, setGoal
         placeholder="Enter your new goal"
         placeholderTextColor="#fff"
       />
-      <Button onPress={() => handleAddGoal()} title="Create" />
+      <Button
+        color={"#0B5B83"}
+        onPress={() => handleAddGoal()}
+        title="Add new goal"
+      />
     </View>
   );
 }

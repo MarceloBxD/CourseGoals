@@ -1,12 +1,13 @@
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import {
-  Button,
   SafeAreaView,
   StyleSheet,
   Text,
   View,
   FlatList,
+  Modal,
+  Button,
 } from "react-native";
 import GoalInput from "./src/components/GoalInput";
 import { GoalProvider } from "./src/contexts/GoalContext";
@@ -14,17 +15,42 @@ import { GoalProvider } from "./src/contexts/GoalContext";
 export default function App() {
   const [goals, setGoals] = useState([]);
   const [currentGoalText, setCurrentGoalText] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   return (
     <GoalProvider>
+      <StatusBar style="light" />
+
       <SafeAreaView style={styles.container}>
-        <StatusBar style="light" />
         <Text style={styles.title}>Course Native Goals</Text>
-        <GoalInput
-          setGoals={setGoals}
-          setCurrentGoalText={setCurrentGoalText}
-          currentGoalText={currentGoalText}
+        <Button
+          title="Add new goal"
+          onPress={() => {
+            setIsModalVisible(true);
+          }}
         />
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isModalVisible}
+        >
+          <View style={styles.goalsInput}>
+            <GoalInput
+              setGoals={setGoals}
+              setCurrentGoalText={setCurrentGoalText}
+              currentGoalText={currentGoalText}
+              setIsModalVisible={setIsModalVisible}
+            />
+          </View>
+          <Button
+            title="Close"
+            onPress={() => {
+              setIsModalVisible(false);
+              setCurrentGoalText("");
+            }}
+            style={styles.showModalButton}
+          />
+        </Modal>
         <View style={styles.goalsContainer}>
           <FlatList
             data={goals}
@@ -55,30 +81,34 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#111",
     alignItems: "center",
     paddingTop: 50,
+    backgroundColor: "#29335C",
   },
-
   goalsContainer: {
     flex: 3,
     justifyContent: "center",
     alignItems: "center",
     width: "80%",
-    marginTop: 60,
   },
   title: {
     color: "#fff",
     fontSize: 20,
+    marginBottom: 20,
   },
   goalText: {
     color: "#fff",
     fontSize: 20,
     padding: 10,
-    borderWidth: 1,
+    borderBottomWidth: 1,
     borderColor: "#fff",
-    borderRadius: 5,
     marginBottom: 10,
-    minWidth: "100%",
+    width: 350,
+  },
+  goalsInput: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 });
