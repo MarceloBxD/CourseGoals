@@ -8,6 +8,7 @@ import {
   FlatList,
   Modal,
   Button,
+  Image,
 } from "react-native";
 import GoalInput from "./src/components/GoalInput";
 import { GoalProvider } from "./src/contexts/GoalContext";
@@ -51,6 +52,7 @@ export default function App() {
             style={styles.showModalButton}
           />
         </Modal>
+        <Image source={require("./assets/icon.png")} style={styles.img} />
         <View style={styles.goalsContainer}>
           <FlatList
             data={goals}
@@ -85,6 +87,12 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     backgroundColor: "#29335C",
   },
+  img: {
+    width: 100,
+    height: 100,
+    marginVertical: 20,
+  },
+
   goalsContainer: {
     flex: 3,
     justifyContent: "center",
