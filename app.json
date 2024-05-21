@@ -4,12 +4,13 @@
     "slug": "CourseGoals",
     "version": "1.0.0",
     "orientation": "portrait",
+    "backgroundColor": "#6A1211",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#6A1211"
     },
     "ios": {
       "supportsTablet": true
