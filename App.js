@@ -5,50 +5,50 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   View,
-  ScrollView,
+  FlatList,
 } from "react-native";
+import GoalInput from "./src/components/GoalInput";
+import { GoalProvider } from "./src/contexts/GoalContext";
 
 export default function App() {
   const [goals, setGoals] = useState([]);
   const [currentGoalText, setCurrentGoalText] = useState("");
 
-  const handleAddGoal = () => {
-    setGoals((prevGoals) => [...prevGoals, currentGoalText]);
-    setCurrentGoalText("");
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
-      <Text style={styles.title}>Course Native Goals</Text>
-      <View style={styles.userInputs}>
-        <TextInput
-          style={styles.input}
-          value={currentGoalText}
-          onChangeText={(text) => setCurrentGoalText(text)}
-          placeholder="Enter your new goal"
-          placeholderTextColor="#fff"
+    <GoalProvider>
+      <SafeAreaView style={styles.container}>
+        <StatusBar style="light" />
+        <Text style={styles.title}>Course Native Goals</Text>
+        <GoalInput
+          setGoals={setGoals}
+          setCurrentGoalText={setCurrentGoalText}
+          currentGoalText={currentGoalText}
         />
-        <Button onPress={() => handleAddGoal()} title="Create" />
-      </View>
-      <View style={styles.goalsContainer}>
-        <ScrollView>
-          {goals.map((goal) => (
-            <Text
-              style={styles.goalText}
-              key={goal}
-              onPress={() =>
-                setGoals((prevGoals) => prevGoals.filter((g) => g !== goal))
-              }
-            >
-              {goal}
-            </Text>
-          ))}
-        </ScrollView>
-      </View>
-    </SafeAreaView>
+        <View style={styles.goalsContainer}>
+          <FlatList
+            data={goals}
+            keyExtractor={(item, index) => {
+              return item.id;
+            }}
+            renderItem={({ item }) => {
+              return (
+                <Text
+                  style={styles.goalText}
+                  onPress={() =>
+                    setGoals((prevGoals) =>
+                      prevGoals.filter((goal) => goal.id !== item.id)
+                    )
+                  }
+                >
+                  {item.value}
+                </Text>
+              );
+            }}
+          />
+        </View>
+      </SafeAreaView>
+    </GoalProvider>
   );
 }
 
@@ -59,30 +59,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingTop: 50,
   },
-  userInputs: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "70%",
-    gap: 20,
-    flex: 1,
-  },
+
   goalsContainer: {
     flex: 3,
     justifyContent: "center",
     alignItems: "center",
     width: "80%",
     marginTop: 60,
-  },
-  input: {
-    borderBottomColor: "#fff",
-    borderBottomWidth: 1,
-    width: "80%",
-    color: "#fff",
-    marginBottom: 20,
-    marginTop: 20,
-    paddingHorizontal: 5,
-    paddingVertical: 5,
   },
   title: {
     color: "#fff",
