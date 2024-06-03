@@ -9,6 +9,8 @@ import {
   Modal,
   Button,
   Image,
+  Dimensions,
+  useWindowDimensions,
 } from "react-native";
 import GoalInput from "./src/components/GoalInput";
 import { GoalProvider } from "./src/contexts/GoalContext";
@@ -18,11 +20,22 @@ export default function App() {
   const [currentGoalText, setCurrentGoalText] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const { width, height } = useWindowDimensions();
+
+  const marginTopDistance = height < 380 ? 30 : 50;
+
   return (
     <GoalProvider>
       <StatusBar style="light" />
 
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView
+        style={[
+          styles.container,
+          {
+            marginTop: marginTopDistance,
+          },
+        ]}
+      >
         <Text style={styles.title}>Course Native Goals</Text>
         <Button
           title="Add new goal"
@@ -79,6 +92,9 @@ export default function App() {
     </GoalProvider>
   );
 }
+
+// Essa não é a melhor prática, pois só é executado uma vez
+// const { width, height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
