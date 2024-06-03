@@ -9,10 +9,10 @@ import {
   Modal,
   Button,
   Image,
-  Dimensions,
   useWindowDimensions,
 } from "react-native";
 import GoalInput from "./src/components/GoalInput";
+import { Colors } from "./constants/Colors";
 import { GoalProvider } from "./src/contexts/GoalContext";
 
 export default function App() {
@@ -20,9 +20,12 @@ export default function App() {
   const [currentGoalText, setCurrentGoalText] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const { width, height } = useWindowDimensions();
+  const { height } = useWindowDimensions();
 
-  const marginTopDistance = height < 380 ? 30 : 50;
+  const marginTopDistance = height < 380 ? 30 : 10;
+
+  let imgSize = height < 500 ? 100 : 200;
+  let imgRightPosition = height < 500 ? 20 : null;
 
   return (
     <GoalProvider>
@@ -65,7 +68,17 @@ export default function App() {
             style={styles.showModalButton}
           />
         </Modal>
-        <Image source={require("./assets/icon.png")} style={styles.img} />
+        <Image
+          source={require("./assets/icon.png")}
+          style={[
+            styles.img,
+            {
+              width: imgSize,
+              height: imgSize,
+              right: imgRightPosition,
+            },
+          ]}
+        />
         <View style={styles.goalsContainer}>
           <FlatList
             data={goals}
@@ -101,12 +114,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingTop: 50,
-    backgroundColor: "#29335C",
+    backgroundColor: Colors.primary,
   },
   img: {
     width: 100,
     height: 100,
     marginVertical: 20,
+    position: "absolute",
+    bottom: 0,
   },
 
   goalsContainer: {
@@ -114,6 +129,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "80%",
+    marginTop: 50,
   },
   title: {
     color: "#fff",
@@ -131,8 +147,9 @@ const styles = StyleSheet.create({
   },
   goalsInput: {
     flex: 1,
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
   },
 });

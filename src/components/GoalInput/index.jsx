@@ -1,4 +1,15 @@
-import React, { View, TextInput, StyleSheet, Button } from "react-native";
+import React, {
+  View,
+  TextInput,
+  StyleSheet,
+  Button,
+  useWindowDimensions,
+  KeyboardAvoidingView,
+} from "react-native";
+
+import { useEffect, useRef } from "react";
+
+import { Colors } from "../../../constants/Colors";
 
 export default function GoalInput({
   currentGoalText,
@@ -6,7 +17,15 @@ export default function GoalInput({
   setGoals,
   setIsModalVisible,
 }) {
+  const { width, height } = useWindowDimensions();
+
+  const inputRef = useRef(null);
+
+  const marginTopDistance = height < 380 ? 30 : 50;
+
   const handleAddGoal = () => {
+    if (currentGoalText === "") return alert("Please enter a goal");
+
     setGoals((prevGoals) => [
       ...prevGoals,
       {
@@ -19,20 +38,31 @@ export default function GoalInput({
   };
 
   return (
-    <View style={styles.userInputs}>
+    <KeyboardAvoidingView
+      behavior="position"
+      style={[
+        styles.userInputs,
+        {
+          marginTop: marginTopDistance,
+        },
+      ]}
+    >
       <TextInput
+        ref={inputRef}
         style={styles.input}
         value={currentGoalText}
         onChangeText={(text) => setCurrentGoalText(text)}
         placeholder="Enter your new goal"
         placeholderTextColor="#fff"
+        autoFocus={true}
       />
       <Button
-        color={"#0B5B83"}
+        color={Colors.btnPrimary}
         onPress={() => handleAddGoal()}
+        disabled={currentGoalText === ""}
         title="Add new goal"
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -48,8 +78,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   userInputs: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: "column",
     alignItems: "center",
     width: "70%",
     gap: 20,
