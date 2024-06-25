@@ -10,40 +10,35 @@ import {
   Button,
   Image,
   useWindowDimensions,
+  Pressable,
 } from "react-native";
 import GoalInput from "./src/components/GoalInput";
 import { Colors } from "./constants/Colors";
 import { GoalProvider } from "./src/contexts/GoalContext";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function App() {
   const [goals, setGoals] = useState([]);
   const [currentGoalText, setCurrentGoalText] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [itemToEdit, setItemToEdit] = useState(null);
+  const [modalType, setModalType] = useState("add");
 
   const { height } = useWindowDimensions();
 
-  const marginTopDistance = height < 380 ? 30 : 10;
-
-  let imgSize = height < 500 ? 100 : 200;
+  let imgSize = height < 500 ? 100 : 120;
   let imgRightPosition = height < 500 ? 20 : null;
 
   return (
     <GoalProvider>
-      <StatusBar style="light" />
-
-      <SafeAreaView
-        style={[
-          styles.container,
-          {
-            marginTop: marginTopDistance,
-          },
-        ]}
-      >
-        <Text style={styles.title}>Course Native Goals</Text>
+      <StatusBar style="dark" />
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.title}>Objetivos do Curso</Text>
         <Button
-          title="Add new goal"
+          title="Adicionar Objetivo"
           onPress={() => {
             setIsModalVisible(true);
+            setModalType("add");
           }}
         />
         <Modal
@@ -53,52 +48,72 @@ export default function App() {
         >
           <View style={styles.goalsInput}>
             <GoalInput
+              modalType={modalType}
               setGoals={setGoals}
+              itemToEdit={itemToEdit}
+              setItemToEdit={setItemToEdit}
               setCurrentGoalText={setCurrentGoalText}
               currentGoalText={currentGoalText}
+              setModalType={setModalType}
               setIsModalVisible={setIsModalVisible}
             />
           </View>
           <Button
-            title="Close"
+            title="Cancelar"
+            color={Colors.btnPrimary}
             onPress={() => {
               setIsModalVisible(false);
               setCurrentGoalText("");
+              setItemToEdit(null);
+              setModalType("add");
             }}
-            style={styles.showModalButton}
           />
         </Modal>
         <Image
           source={require("./assets/icon.png")}
           style={[
             styles.img,
-            {
-              width: imgSize,
-              height: imgSize,
-              right: imgRightPosition,
-            },
+            { width: imgSize, height: imgSize, right: imgRightPosition },
           ]}
         />
         <View style={styles.goalsContainer}>
           <FlatList
             data={goals}
-            keyExtractor={(item, index) => {
-              return item.id;
-            }}
-            renderItem={({ item }) => {
-              return (
-                <Text
-                  style={styles.goalText}
-                  onPress={() =>
-                    setGoals((prevGoals) =>
-                      prevGoals.filter((goal) => goal.id !== item.id)
-                    )
-                  }
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <Pressable
+                android_ripple={{ color: Colors.btnPrimary }}
+                style={({ pressed }) => [
+                  styles.goalContainer,
+                  pressed && { backgroundColor: "#ddd" },
+                ]}
+              >
+                <Pressable
+                  onPress={() => {
+                    setModalType("edit");
+                    setItemToEdit(item);
+                    setCurrentGoalText(item.value);
+                    setIsModalVisible(true);
+                  }}
+                  style={styles.goalItem}
                 >
-                  {item.value}
-                </Text>
-              );
-            }}
+                  <View>
+                    <Text style={styles.goalText}>{item.value}</Text>
+                  </View>
+                  <View>
+                    <Pressable
+                      onPress={() => {
+                        setGoals((prevGoals) =>
+                          prevGoals.filter((goal) => goal.id !== item.id)
+                        );
+                      }}
+                    >
+                      <Ionicons name="trash" color={"#F00"} size={24} />
+                    </Pressable>
+                  </View>
+                </Pressable>
+              </Pressable>
+            )}
           />
         </View>
       </SafeAreaView>
@@ -106,50 +121,32 @@ export default function App() {
   );
 }
 
-// Essa não é a melhor prática, pois só é executado uma vez
-// const { width, height } = Dimensions.get("window");
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    paddingTop: 50,
     backgroundColor: Colors.primary,
+    justifyContent: "center",
+  },
+  goalItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   img: {
     width: 100,
     height: 100,
-    marginVertical: 20,
     position: "absolute",
-    bottom: 0,
+    bottom: 40,
   },
-
   goalsContainer: {
     flex: 3,
     justifyContent: "center",
     alignItems: "center",
-    width: "80%",
+    width: "100%",
     marginTop: 50,
-  },
-  title: {
-    color: "#fff",
-    fontSize: 20,
-    marginBottom: 20,
-  },
-  goalText: {
-    color: "#fff",
-    fontSize: 20,
-    padding: 10,
-    borderBottomWidth: 1,
-    borderColor: "#fff",
-    marginBottom: 10,
-    width: 350,
-  },
-  goalsInput: {
-    flex: 1,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
   },
 });

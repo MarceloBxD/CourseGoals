@@ -1,14 +1,5 @@
-import React, {
-  View,
-  TextInput,
-  StyleSheet,
-  Button,
-  useWindowDimensions,
-  KeyboardAvoidingView,
-} from "react-native";
-
-import { useEffect, useRef } from "react";
-
+import React, { useRef } from "react";
+import { View, TextInput, StyleSheet, Button, useWindowDimensions } from "react-native";
 import { Colors } from "../../../constants/Colors";
 
 export default function GoalInput({
@@ -16,15 +7,17 @@ export default function GoalInput({
   setCurrentGoalText,
   setGoals,
   setIsModalVisible,
+  modalType,
+  itemToEdit,
+  setItemToEdit,
+  setModalType,
 }) {
-  const { width, height } = useWindowDimensions();
-
+  const { height } = useWindowDimensions();
   const inputRef = useRef(null);
-
   const marginTopDistance = height < 380 ? 30 : 50;
 
   const handleAddGoal = () => {
-    if (currentGoalText === "") return alert("Please enter a goal");
+    if (currentGoalText === "") return alert("Preencha o campo de meta!");
 
     setGoals((prevGoals) => [
       ...prevGoals,
@@ -35,52 +28,58 @@ export default function GoalInput({
     ]);
     setCurrentGoalText("");
     setIsModalVisible(false);
+    setModalType("add");
+  };
+
+  const handleEditGoal = () => {
+    setGoals((prevGoals) =>
+      prevGoals.map((goal) => {
+        if (goal.id === itemToEdit.id) {
+          return { ...goal, value: currentGoalText };
+        }
+        return goal;
+      })
+    );
+    setCurrentGoalText("");
+    setItemToEdit(null);
+    setIsModalVisible(false);
+    setModalType("add");
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior="position"
-      style={[
-        styles.userInputs,
-        {
-          marginTop: marginTopDistance,
-        },
-      ]}
-    >
+    <View style={[styles.userInputs, { marginTop: marginTopDistance }]}>
       <TextInput
         ref={inputRef}
         style={styles.input}
         value={currentGoalText}
-        onChangeText={(text) => setCurrentGoalText(text)}
-        placeholder="Enter your new goal"
-        placeholderTextColor="#fff"
+        onChangeText={setCurrentGoalText}
+        placeholder="Nova meta"
+        placeholderTextColor={Colors.btnPrimary}
         autoFocus={true}
       />
       <Button
         color={Colors.btnPrimary}
-        onPress={() => handleAddGoal()}
-        disabled={currentGoalText === ""}
-        title="Add new goal"
+        onPress={() => (modalType === "add" ? handleAddGoal() : handleEditGoal())}
+        title={modalType === "add" ? "Adicionar" : "Editar"}
       />
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   input: {
-    borderBottomColor: "#fff",
+    borderBottomColor: Colors.btnPrimary,
     borderBottomWidth: 1,
     width: "80%",
-    color: "#fff",
-    marginBottom: 20,
+    color: Colors.btnPrimary,
     marginTop: 20,
     paddingHorizontal: 5,
-    paddingVertical: 5,
+    paddingVertical: 10,
   },
   userInputs: {
     flexDirection: "column",
     alignItems: "center",
-    width: "70%",
+    width: "100%",
     gap: 20,
     flex: 1,
   },
